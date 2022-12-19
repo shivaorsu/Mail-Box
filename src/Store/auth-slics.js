@@ -12,9 +12,11 @@ const authSlice=createSlice({
             state.isLoggedin=true;
             state.token=action.payload;
         },
-        logout (state,action) {
+        logout (state) {
             state.isLoggedin=false;
             state.token=null;
+            localStorage.removeItem('email')
+
 
         }
     }
