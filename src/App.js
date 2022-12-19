@@ -20,11 +20,13 @@ function App() {
     )
       .then(async (res) => {
         const data = await res.json();
-        for (const key in data) {
-          const item = data[key];
-          item.id = key;
-          dispatch(emailActions.sentEmail(item));
-        }
+        // for (const key in data) {
+        //   const item = data[key];
+        //   item.id = key;
+        //   console.log(item)
+          // dispatch(emailActions.sentEmail(item));
+        // }
+        console.log(data)
       })
       .catch((error) => {
         alert(error);
@@ -32,14 +34,14 @@ function App() {
   }, [dispatch, email]);
   return (
     <main>
-      <switch>
+      <Switch>
         <Route path="/" exact>
           <AuthForm/>
         </Route>
-        <Route path="/welcome">
+        <Route path="/welcome" exact>
           <Welcome/>
         </Route>
-      </switch>
+      </Switch>
     </main>
   );
 }

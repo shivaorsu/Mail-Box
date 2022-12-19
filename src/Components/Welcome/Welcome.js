@@ -36,9 +36,11 @@ const Welcome = () => {
         </div>
         <div>
           <table className={classes.mail}>
+          
             <th>From</th>
 
             <th className={classes.subject}>Subject</th>
+            
           </table>
           <ShowEmails />
         </div>

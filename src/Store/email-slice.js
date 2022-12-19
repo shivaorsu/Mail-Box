@@ -7,14 +7,7 @@ const emailSlice = createSlice({
     },
     reducers:{
         sentEmail(state,action){
-            const newEmail=action.payload;
-
-            state.emails.push({
-                id:newEmail.id,
-                from:newEmail.from,
-                subject:newEmail.subject
-
-            })
+           state.emails = action.payload
         }
     }
 })
