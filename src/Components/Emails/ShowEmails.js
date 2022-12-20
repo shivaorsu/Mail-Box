@@ -3,24 +3,25 @@ import AllEmails from "./AllEmails";
 import { useSelector } from "react-redux";
 
 const ShowEmails = (props) => {
-  // const showEmails = useSelector((state) => state.email.emails);
+  const showEmails = useSelector((state) => state.email.recievedEmails);
   return (
-    // <ul>
-    //   {showEmails.map((item) => (
-    //     <AllEmails
+    <ul>
+      {showEmails.map((item) => (
+        <AllEmails
 
-    //       item={{
+          item={{
 
-    //         id: item.id,
-    //         from: item.from,
-    //         subject: item.subject,
+            id: item.id,
+            from: item.from,
+            subject: item.subject,
+            read:item.read
 
-    //       }}
+          }}
 
-    //     />
-    //   ))}
-    // </ul>
-    <p>Hello</p>
+        />
+      ))}
+    </ul>
+    
   );
 };
 

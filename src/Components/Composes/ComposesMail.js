@@ -1,12 +1,15 @@
-import React,{Fragment,useRef} from "react";
+import React,{Fragment,useRef,useState} from "react";
 import { Editor } from "draft-js";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import classes from './Composes.module.css';
 import { emailActions } from "../../Store/email-slice";
+import { convertFromRaw } from "draft-js";
+import { EditorState} from "draft-js";
 
 const EditorComponent = () => {
+  const [editorState, setEditorState]=useState(()=> EditorState())
     const emailInputRef=useRef();
     const subjectInputRef=useRef();
     //const bodyInputRef= useRef();
@@ -15,29 +18,37 @@ const EditorComponent = () => {
     const dispatch = useDispatch();
 
     const homeHandler = () => {
-        history.replace('./welcome')
+        history.replace('./welcome/index')
     }
 
     async function emailSubmitHandler (event) {
         event.preventDefault();
 
-        const email = emailInputRef.current.value;
+        const emailReciever= emailInputRef.current.value;
         const enteredSubject = subjectInputRef.current.value;
-        //const body = bodyInputRef.current.value;
-        let recieverEmail = email.replace(".", "").replace("@", "");
+        const body = convertFromRaw(editorState.getCurrentContent()).blocks[0].text;
+        let recieverEmail = emailReciever.replace(".", "").replace("@", "");
         let senderEmail = localStorage.getItem('email');
 
-       const obj = {
+        const emailSender = senderEmail.replace(".", "").replace("@", "");
+
+        const objSent={
+          to:emailReciever,
+          subject:enteredSubject,
+          body:body
+        }
+
+       const objRecieved = {
         from: senderEmail,
         subject: enteredSubject,
        }
 
         fetch(
-            `https://mail-chat-581a6-default-rtdb.firebaseio.com/${recieverEmail}.json`,
+            `https://mail-chat-581a6-default-rtdb.firebaseio.com/recieved/${recieverEmail}.json`,
             {
               method: "POST",
               body: JSON.stringify({
-                ...obj,
+                ...objRecieved,
               }),
               headers: {
                 "Content-type": "application/json",
@@ -46,17 +57,45 @@ const EditorComponent = () => {
           ).then(async (res) => {
             const data = await res.json();
             dispatch(
-              emailActions.sentEmail({
+              emailActions.recievedEmail({
                 id: data.name,
-                from: obj.from,
-                subject: obj.subject,
+                from: objRecieved.from,
+                subject: objRecieved.subject,
+                body: objRecieved.body,
+                read: objRecieved.read,
               })
             )
           })
 
-          alert("Email sent successfully")
+          fetch(
+            `https://mail-box-7af32-default-rtdb.firebaseio.com/sent/${emailSender}.json`,
+            {
+              method: "POST",
+              body: JSON.stringify({
+                ...objSent,
+              }),
+              headers: {
+                "Content-type": "application/json",
+              },
+            }
+          ).then(async (res) => {
+            const data = await res.json();
+            dispatch(
+              emailActions.sentBox({
+                id: data.name,
+                to: objSent.to,
+                subject: objSent.subject,
+                body: objSent.body,
 
+
+              })
+            )
+          })
+
+        alert("Sent successfully")  
     }
+
+    
 
   return (
     <Fragment>
@@ -72,7 +111,7 @@ const EditorComponent = () => {
         </div>
         <div>
 
-          <Editor 
+          <Editor  editorState={editorState} onEditorStateChange={setEditorState}
             toolbarClassName="toolbarClassName"
             wrapperClassName="wrapperClassName"
             editorClassName="editorClassName"
@@ -84,6 +123,6 @@ const EditorComponent = () => {
       </form>
     </Fragment>
   );
-};
 
+  }
 export default EditorComponent;

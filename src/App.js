@@ -1,46 +1,121 @@
-import React,{useEffect} from "react";
-import { Switch,Route } from "react-router-dom";
-import Welcome from "./Components/Welcome/Welcome";
-import AuthForm from "./Components/Authentication/AuthForm";
-//import Editorcomponent from "./Components/Composes/ComposesMail";
-import { emailActions } from "./Store/email-slice";
+import React, { useEffect } from 'react';
+import { Switch, Route } from 'react-router-dom';
+import AuthForm from './Components/Authentication/AuthForm';
+import Welcome from './Components/Welcome/Welcome';
 import './App.css';
-import { useDispatch } from "react-redux";
+import { emailActions } from './Store/email-slice';
+import { useDispatch, useSelector } from 'react-redux';
+import EditorComponent from './Components/Composes/ComposesMail';
+
+
 
 
 function App() {
-  let email = localStorage.getItem("email").replace(".", "").replace("@", "");
-  const dispatch=useDispatch();
+
+  const email = useSelector((state) => state.email.email)
+ 
+  const dispatch = useDispatch();
+
+  
   useEffect(() => {
+    
+
+    if (!email) return;
+
     fetch(
-      `https://mail-chat-581a6-default-rtdb.firebaseio.com/${email}.json`,
+      `https://mail-box-7af32-default-rtdb.firebaseio.com/recieved/${email}.json`,
       {
         method: "GET",
       }
     )
       .then(async (res) => {
         const data = await res.json();
-        // for (const key in data) {
-        //   const item = data[key];
-        //   item.id = key;
-        //   console.log(item)
-          // dispatch(emailActions.sentEmail(item));
-        // }
-        console.log(data)
+        for (const key in data) {
+          const item = data[key];
+          item.id = key;
+          dispatch(emailActions.recievedEmail(item));
+          if(!item.read){
+            dispatch(emailActions.increaseUnreadEmails());
+          }
+        }
       })
       .catch((error) => {
-        alert(error);
+        console.log(error);
       });
   }, [dispatch, email]);
+
+
+  useEffect(() => {
+    
+
+    if (!email) return;
+
+    fetch(
+      `https://mail-box-7af32-default-rtdb.firebaseio.com/sent/${email}.json`,
+      {
+        method: "GET",
+      }
+    )
+      .then(async (res) => {
+        const data = await res.json();
+        for (const key in data) {
+          const item = data[key];
+          item.id = key;
+          dispatch(emailActions.sentBox(item));
+          
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [dispatch, email]);
+
+  
+
+  setInterval(() => {
+    fetch(
+      `https://mail-box-7af32-default-rtdb.firebaseio.com/recieved/${email}.json`,
+      {
+        method: "GET",
+      }
+    )
+      .then(async (res) => {
+        dispatch(emailActions.resetRecievedEmails());
+        const data = await res.json();
+        for (const key in data) {
+          const item = data[key];
+          item.id = key;
+          
+          dispatch(emailActions.recievedEmail(item));
+          if(!item.read){
+            dispatch(emailActions.increaseUnreadEmails());
+          }
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  },5000);
+  
+  
+
   return (
     <main>
       <Switch>
         <Route path="/" exact>
-          <AuthForm/>
+          <AuthForm />
         </Route>
-        <Route path="/welcome" exact>
-          <Welcome/>
+
+        <Route path='/welcome/:id'>
+          <Welcome />
         </Route>
+        <Route path='/welcome/inbox'>
+          <Welcome />
+        </Route>
+        <Route path='/composeMail'>
+          <EditorComponent/>
+        </Route>
+
       </Switch>
     </main>
   );
