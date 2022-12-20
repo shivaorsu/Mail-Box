@@ -7,9 +7,6 @@ import { emailActions } from './Store/email-slice';
 import { useDispatch, useSelector } from 'react-redux';
 import EditorComponent from './Components/Composes/ComposesMail';
 
-
-
-
 function App() {
 
   const email = useSelector((state) => state.email.email)
@@ -23,7 +20,7 @@ function App() {
     if (!email) return;
 
     fetch(
-      `https://mail-box-7af32-default-rtdb.firebaseio.com/recieved/${email}.json`,
+      `https://mail-chat-581a6-default-rtdb.firebaseio.com/recieved/${email}.json`,
       {
         method: "GET",
       }
@@ -51,7 +48,7 @@ function App() {
     if (!email) return;
 
     fetch(
-      `https://mail-box-7af32-default-rtdb.firebaseio.com/sent/${email}.json`,
+      `https://mail-chat-581a6-default-rtdb.firebaseio.com/sent/${email}.json`,
       {
         method: "GET",
       }
@@ -74,7 +71,7 @@ function App() {
 
   setInterval(() => {
     fetch(
-      `https://mail-box-7af32-default-rtdb.firebaseio.com/recieved/${email}.json`,
+      `https://mail-chat-581a6-default-rtdb.firebaseio.com/recieved/${email}.json`,
       {
         method: "GET",
       }

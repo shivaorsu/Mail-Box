@@ -6,7 +6,7 @@ import emailSlice from "./email-slice";
 const Store=configureStore({
     reducer:{
         auth:authSlice.reducer,
-        auth:emailSlice.reducer
+        email:emailSlice.reducer
     }
 });
 export default Store;

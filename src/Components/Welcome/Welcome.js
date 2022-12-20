@@ -7,7 +7,7 @@ import { authActions } from "../../Store/auth-slics";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { emailActions } from "../../Store/email-slice";
-import SentEmails from "../Emails/SentEmail";
+//import SentEmails from "../Emails/SentEmail";
 import { useParams } from "react-router-dom";
 
 

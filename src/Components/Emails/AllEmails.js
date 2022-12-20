@@ -19,7 +19,7 @@ const AllEmails = (props) => {
   const readEmailHandler = () => {
     setStatus(true);
     setReading(true);
-    dispatch(emailActions.reduceUnreadEmails());
+    dispatch(emailActions.reducerUnreadEmails());
 
     fetch (`https://mail-chat-581a6-default-rtdb.firebaseio.com/recived/${email}/${id}.json`, {
       method:'PATCH',

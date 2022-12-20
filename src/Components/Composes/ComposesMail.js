@@ -9,10 +9,10 @@ import { convertFromRaw } from "draft-js";
 import { EditorState} from "draft-js";
 
 const EditorComponent = () => {
-  const [editorState, setEditorState]=useState(()=> EditorState())
+  const [editorState, setEditorState]=useState(()=> EditorState.createEmpty())
     const emailInputRef=useRef();
     const subjectInputRef=useRef();
-    //const bodyInputRef= useRef();
+    
     const history = useHistory();
 
     const dispatch = useDispatch();
